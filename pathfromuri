@@ -31,4 +31,7 @@ if __name__ == "__main__":
 	for line in fileinput.input():
 		line = line.rstrip('\n')
 		proto,host,port,path = parseUrl(line)
-		print path
+		if len(host) == 0:
+			continue
+		if len(path) > 0:
+			print path.rstrip('\\')
