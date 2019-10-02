@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import fileinput
+try:
+	from urllib.parse import urlparse
+except ImportError:
+	from urlparse import urlparse
+
+def parseUrl(urlstr):
+	proto = host = port = path = ""
+	uridata = urlparse(urlstr)
+	proto = str(uridata.scheme)
+	path = uridata.path
+	if len(uridata.scheme) < 2: # "//"
+		proto = "http"
+
+	if ":" in uridata.netloc: # we have a port definition
+		port = str(uridata.netloc.split(':')[1])
+		host = str(uridata.netloc.split(':')[0])
+	else:
+		if uridata.scheme == "http":
+			port = "80"
+		if uridata.scheme == "https":
+			port = "443"
+		host = str(uridata.netloc)
+
+	return proto,host,port,path
+
+if __name__ == "__main__":
+	proto = host = port = path = ""
+	for line in fileinput.input():
+		line = line.rstrip('\n')
+		proto,host,port,path = parseUrl(line)
+		print host
