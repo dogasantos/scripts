@@ -1,7 +1,7 @@
 install_prepare() {
   apt-get update
   apt-get -y upgrade
-  apt-get -y install gcc wget curl make libpcap-dev zlib1g-dev libjpeg-dev unzip git python3-pip nmap vim build-essential pkg-config
+  apt-get -y install awscli gcc wget curl make libpcap-dev zlib1g-dev libjpeg-dev unzip git python3-pip nmap vim build-essential pkg-config
   
 }
 
@@ -64,7 +64,6 @@ install_s3scanner(){
     git clone https://github.com/sa7mon/S3Scanner.git s3scanner
     cd s3scanner
     pip install -r requirements.txt
-    apt-get -y install awscli
     echo '#!/bin/bash' >/usr/bin/s3scanner
     echo "python /usr/share/s3scanner/s3scanner.py \$@" >> /usr/bin/s3scanner
     chmod 755 /usr/bin/s3scanner
@@ -128,60 +127,83 @@ install_masscan(){
     echo "  + DONE"
 }
 
-
-install_gotools() {
-  go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
-  go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
-  go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
-  go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
-  go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
-  go get -v -u github.com/projectdiscovery/mapcidr/cmd/mapcidr
-  go install -v github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
-  go install -v github.com/projectdiscovery/proxify/cmd/proxify@latest
-  go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
-  go install -v github.com/projectdiscovery/notify/cmd/notify@latest
-  go install -v github.com/ffuf/ffuf@latest
-  go install -v github.com/003random/getJS@latest
-  go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest
-  go install -v github.com/sensepost/gowitness@latest
-  go install -v github.com/hahwul/dalfox/v2@latest
-  go install -v github.com/dogasantos/prefixcheck/cmd/prefixcheck@latest
-  go install -v github.com/dogasantos/hof@latest
+install_gotools2() {
   cd /usr/share/
   git clone https://github.com/dogasantos/hakrawler.git
   cd hakrawler && go build -o hakrawler hakrawler.go
   cp hakrawler ~/go/bin/
-  go get -v github.com/dogasantos/tls-scan-hostgrabber
-  cd /usr/share
+  cd /usr/share/
+  
   git clone https://github.com/dogasantos/tls-scan-hostgrabber.git
   cd tls-scan-hostgrabber
   go mod init https://github.com/dogasantos/tls-scan-hostgrabber
   go mod tidy
   go build -o tls-scan-hostgrabber tls-scan-hostgrabber.go
-  cp tls-scan-hostgrabber ~/go/bin
-  go install -v github.com/cgboal/sonarsearch/cmd/crobat@latest
-  go install -v github.com/tomnomnom/anew@latest
-  go install -v github.com/tomnomnom/httprobe
-  go install -v github.com/tomnomnom/waybackurls
-  go install -v github.com/tomnomnom/qsreplace
-  go install -v github.com/tomnomnom/unfurl
-  echo "GO TOOLS OK"
+  cp tls-scan-hostgrabber ~/go/bin/
+
 }
 
 
+install_gotools() {
+  if [ -d /usr/local/go ]
+  then
+    go install -v github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest
+    go install -v github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+    go install -v github.com/projectdiscovery/naabu/v2/cmd/naabu@latest
+    go install -v github.com/projectdiscovery/httpx/cmd/httpx@latest
+    go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
+    go get -v -u github.com/projectdiscovery/mapcidr/cmd/mapcidr
+    go install -v github.com/projectdiscovery/mapcidr/cmd/mapcidr@latest
+    go install -v github.com/projectdiscovery/shuffledns/cmd/shuffledns@latest
+    go install -v github.com/projectdiscovery/proxify/cmd/proxify@latest
+    go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
+    go install -v github.com/projectdiscovery/notify/cmd/notify@latest
+    go install -v github.com/ffuf/ffuf@latest
+    go install -v github.com/003random/getJS@latest
+    go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest
+    go install -v github.com/sensepost/gowitness@latest
+    go install -v github.com/hahwul/dalfox/v2@latest
+    go install -v github.com/dogasantos/prefixcheck/cmd/prefixcheck@latest
+    go get -v github.com/dogasantos/tls-scan-hostgrabber
+    go install -v github.com/cgboal/sonarsearch/cmd/crobat@latest
+    go install -v github.com/tomnomnom/anew@latest
+    go install -v github.com/tomnomnom/httprobe
+    go install -v github.com/tomnomnom/waybackurls
+    go install -v github.com/tomnomnom/qsreplace
+    go install -v github.com/tomnomnom/unfurl
+    echo "GO TOOLS OK"
+  else
+    echo "precisa instalar go manualmente primeiro (/usr/local/go)"
+    echo "depois precisa setar o bashrc com as envs corretas GOPATH GOBIN GOROOT PATH"
+    exit
+  fi
+}
 
 # ORDEM:
 wdir=$(pwd)
-install_prepare
-install_masscan
-install_massdns
-install_eyewitness
-install_masstomap
-install_linkfinder
 install_gotools
-install_amass
-install_wordlists
-install_s3scanner
+
+
+if [ $(id -u) -eq 0 ] 
+then
+  # root power
+  install_prepare
+  install_masscan
+  install_massdns
+  install_eyewitness
+  install_masstomap
+  install_linkfinder
+  install_amass
+  install_wordlists
+  install_s3scanner
+  install_gotools2
+else
+  #user 
+  cp /usr/share/tls-scan-hostgrabber/tls-scan-hostgrabber ~/go/bin/
+  cp /usr/share/hakrawler/hakrawler ~/go/bin/  
+fi
+
+
 cd $wdir
 
 echo "concluido"
