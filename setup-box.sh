@@ -168,10 +168,10 @@ install_gotools() {
     go get -v github.com/dogasantos/tls-scan-hostgrabber
     go install -v github.com/cgboal/sonarsearch/cmd/crobat@latest
     go install -v github.com/tomnomnom/anew@latest
-    go install -v github.com/tomnomnom/httprobe
-    go install -v github.com/tomnomnom/waybackurls
-    go install -v github.com/tomnomnom/qsreplace
-    go install -v github.com/tomnomnom/unfurl
+    go install -v github.com/tomnomnom/httprobe@latest
+    go install -v github.com/tomnomnom/waybackurls@latest
+    go install -v github.com/tomnomnom/qsreplace@latest
+    go install -v github.com/tomnomnom/unfurl@latest
     echo "GO TOOLS OK"
   else
     echo "precisa instalar go manualmente primeiro (/usr/local/go)"
