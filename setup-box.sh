@@ -158,6 +158,7 @@ install_gotools() {
     go install -v github.com/projectdiscovery/proxify/cmd/proxify@latest
     go install -v github.com/projectdiscovery/dnsx/cmd/dnsx@latest
     go install -v github.com/projectdiscovery/notify/cmd/notify@latest
+    go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
     go install -v github.com/ffuf/ffuf@latest
     go install -v github.com/003random/getJS@latest
     go install -v github.com/pwnesia/dnstake/cmd/dnstake@latest
