@@ -136,7 +136,7 @@ install_gotools2() {
   
   git clone https://github.com/dogasantos/tls-scan-hostgrabber.git
   cd tls-scan-hostgrabber
-  go mod init https://github.com/dogasantos/tls-scan-hostgrabber
+  go mod init github.com/dogasantos/tls-scan-hostgrabber
   go mod tidy
   go build -o tls-scan-hostgrabber tls-scan-hostgrabber.go
   cp tls-scan-hostgrabber ~/go/bin/
