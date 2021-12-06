@@ -38,6 +38,21 @@ install_masstomap() {
     echo "  + DONE"
 }
 
+
+install_webmapper(){
+    if [ -d  /usr/share/linkfinder ]
+    then
+        return 1
+    fi
+    cd /usr/share/
+    git clone https://github.com/dogasantos/webmapper.git webmapper
+    cd webmapper
+    pip3 install -r requirements.txt
+    echo '#!/bin/bash' >/usr/bin/webmapper
+    echo 'python /usr/share/webmapper/webmapper.py $@' >> /usr/bin/webmapper
+    chmod 755 /usr/bin/webmapper
+ }
+
 install_linkfinder() {
     if [ -d  /usr/share/linkfinder ]
     then
@@ -47,7 +62,7 @@ install_linkfinder() {
 
     cd /usr/share
     git clone https://github.com/GerbenJavado/LinkFinder.git linkfinder
-    pip install jsbeautifier argparse
+    pip3 install jsbeautifier argparse
     echo '#!/bin/bash' >/usr/bin/linkfinder
     echo "python /usr/share/linkfinder/mod_linkfinder.py \$@" >> /usr/bin/linkfinder
     chmod 755 /usr/bin/linkfinder
@@ -63,7 +78,7 @@ install_s3scanner(){
     cd /usr/share/
     git clone https://github.com/sa7mon/S3Scanner.git s3scanner
     cd s3scanner
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
     echo '#!/bin/bash' >/usr/bin/s3scanner
     echo "python /usr/share/s3scanner/s3scanner.py \$@" >> /usr/bin/s3scanner
     chmod 755 /usr/bin/s3scanner
@@ -198,6 +213,11 @@ then
   install_wordlists
   install_s3scanner
   install_gotools2
+  install_webmapper
+  cd /usr/share/nmap/scripts
+  wget https://raw.githubusercontent.com/theMiddleBlue/nmap-elasticsearch-nse/master/elasticsearch.nse
+  cd -
+  
 else
   #user 
   cp /usr/share/tls-scan-hostgrabber/tls-scan-hostgrabber ~/go/bin/
